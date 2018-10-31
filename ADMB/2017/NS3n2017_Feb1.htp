@@ -1,0 +1,250 @@
+#if !defined(_NS3N2017_FEB1_)
+#  define _NS3N2017_FEB1_
+
+class model_data : public ad_comm{
+  data_int fyear;
+  data_int lyear;
+  data_int na;
+  data_int ra;
+  data_int sla;
+  data_int nyt;
+  data_int nyw;
+  data_int nyo;
+  data_int ntag1;
+  data_int ntag2;
+  data_ivector scy;
+  data_int qyear;
+  data_number slm;
+  data_number slt;
+  data_number M2;
+  data_number ms6;
+  data_vector msn;
+  data_vector maxs;
+  data_vector efn;
+  data_vector hm;
+  data_vector lg;
+  data_vector wm;
+  data_ivector it;
+  data_vector tt;
+  data_vector pct;
+  data_vector yt;
+  data_vector cv;
+  data_matrix nont;
+  data_matrix noot;
+  data_ivector iw;
+  data_vector wcpue;
+  data_matrix nonw;
+  data_matrix noow;
+  data_vector tc;
+  data_vector te;
+  data_vector stcpue;
+  data_vector secpue;
+  data_vector ys;
+  data_matrix nonc;
+  data_matrix nooc;
+  data_vector twc;
+  data_vector tws;
+  data_vector twst;
+  data_ivector io;
+  data_matrix nono;
+  data_matrix nooo;
+  data_imatrix tag_recov1;
+  data_imatrix tag_recov2;
+  data_number SDRec;
+  data_number SDW;
+  data_number log_initp;
+  data_int initp_phase;
+  data_int qtno_phase;
+  data_int M_phase;
+  data_int ms_phase;
+  data_int lamc;
+  data_int lamw;
+  data_int lawp;
+  data_number latag;
+  data_number st_est;
+  data_int nst;
+  data_int nsc;
+  ~model_data();
+  model_data(int argc,char * argv[]);
+  friend class model_parameters;
+};
+
+class model_parameters : public model_data ,
+  public function_minimizer
+{
+public:
+  ~model_parameters();
+  void preliminary_calculations(void);
+  void set_runtime(void);
+  virtual void * mycast(void) {return (void*)this;}
+  static int mc_phase(void)
+  {
+    return initial_params::mc_phase;
+  }
+  static int mceval_phase(void)
+  {
+    return initial_params::mceval_phase;
+  }
+  static int sd_phase(void)
+  {
+    return initial_params::sd_phase;
+  }
+  static int current_phase(void)
+  {
+    return initial_params::current_phase;
+  }
+  static int last_phase(void)
+  {
+    return (initial_params::current_phase
+      >=initial_params::max_number_phases);
+  }
+  static prevariable current_feval(void)
+  {
+    return *objective_function_value::pobjfun;
+  }
+private:
+  ivector integer_control_flags;
+  dvector double_control_flags;
+  param_init_bounded_vector log_q;
+  param_init_bounded_number log_qw;
+  param_init_bounded_number log_initpop;
+  param_init_bounded_number log_recscale;
+  param_init_bounded_dev_vector log_relrec;
+  param_init_bounded_vector flnp;
+  param_init_bounded_vector rlnp;
+  param_init_bounded_number log_mol;
+  param_init_bounded_dev_vector log_mol_dev;
+  param_init_bounded_vector log_st1;
+  param_init_bounded_number log_sw1;
+  param_init_bounded_vector sw3;
+  param_init_bounded_vector log_sc1;
+  param_init_bounded_number advar;
+  param_init_bounded_number qtno;
+  param_init_bounded_number M;
+  param_init_bounded_number ms;
+  param_init_bounded_number sigma;
+  param_init_bounded_vector ig;
+  param_vector st;
+  param_vector sw;
+  param_vector sc;
+  param_vector so;
+  param_matrix ont;
+  param_matrix oot;
+  param_matrix onw;
+  param_matrix oow;
+  param_matrix onc;
+  param_matrix ooc;
+  param_matrix ono;
+  param_matrix ooo;
+  param_vector log_rec;
+  param_matrix nps;
+  param_matrix ops;
+  param_matrix npw;
+  param_matrix opw;
+  param_matrix enc;
+  param_matrix eoc;
+  param_vector ecpue;
+  param_vector cvcpue;
+  param_matrix enwp;
+  param_matrix eowp;
+  param_matrix enwpd;
+  param_matrix eowpd;
+  param_matrix enwc;
+  param_matrix eowc;
+  param_vector twsd;
+  param_vector tb;
+  param_vector tw;
+  param_vector twp;
+  param_vector rec;
+  param_matrix ent;
+  param_matrix eot;
+  param_matrix ent0;
+  param_matrix eot0;
+  param_matrix enw;
+  param_matrix eow;
+  param_matrix eno;
+  param_matrix eoo;
+  param_vector ettq;
+  param_vector ett;
+  param_vector ett1;
+  param_vector ett2;
+  param_vector ewcpue;
+  param_matrix molp;
+  param_vector mp1;
+  param_vector mp0;
+  param_matrix selc1;
+  param_matrix sel;
+  param_vector st1;
+  param_vector sc1;
+  param_matrix selt1;
+  param_matrix selt;
+  param_vector selw;
+  param_vector Mn;
+  param_vector q;
+  param_number qw;
+  param_vector FSum;
+  param_vector FWin;
+  param_vector FSub;
+  param_vector bc;
+  param_vector bcw;
+  param_vector T_var;
+  param_vector expn;
+  param_vector expr;
+  param_vector npp;
+  param_vector rpp;
+  param_vector tt1;
+  param_vector tt2;
+  param_vector tf;
+  param_matrix tagrecap1;
+  param_matrix tagrecap2;
+  param_matrix tagrecap3;
+  param_matrix tagrecap12;
+  param_matrix tagrecap22;
+  param_matrix tagrecap32;
+  param_matrix ptagrecap1;
+  param_matrix ptagrecap2;
+  param_matrix ptagrecap3;
+  param_matrix ptagrecap12;
+  param_matrix ptagrecap22;
+  param_matrix ptagrecap32;
+  param_matrix tgr;
+  param_matrix mgr1;
+  param_matrix mgr2;
+  param_matrix mgr3;
+  param_matrix egr1;
+  param_matrix egr2;
+  param_matrix egr3;
+  param_matrix egr12;
+  param_matrix egr22;
+  param_matrix egr32;
+  param_vector ef;
+  param_number test;
+  param_number prior_function_value;
+  param_number likelihood_function_value;
+  objective_function_value f;
+  param_stddev_vector last_y;
+  param_stddev_vector legaln;
+  param_stddev_vector legalb;
+  param_stddev_vector mmb0;
+  param_vector legal;
+  param_vector mmb;
+  param_stddev_number last_legal;
+  param_stddev_number last_subl;
+  param_number bmsy;
+  param_stddev_number last_mmb;
+  param_likeprof_number last_ofl;
+public:
+  virtual void userfunction(void);
+  virtual void report(const dvector& gradients);
+  virtual void final_calcs(void);
+  model_parameters(int sz,int argc, char * argv[]);
+  virtual void initializationfunction(void);
+  void convert_parameters_into_rates(void);
+  void get_first_year_abundance(void);
+  void growth_matrix(void);
+  void get_number_by_size(void);
+  void get_proportion_and_effort(void);
+  void evaluate_the_objective_function(void);
+
+};
+#endif

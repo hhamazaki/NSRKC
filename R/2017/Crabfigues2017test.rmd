@@ -1,0 +1,162 @@
+---
+title: "Sample Document"
+output:
+#  html_document:
+#    toc: true
+#    theme: united
+  word_document:
+    toc: true
+#    highlight: zenburn
+---
+
+This document is just a test of RPubs platform for publishing R Markdown. I'll use the `survey` dataset from the `MASS` package to explore a few features.
+
+```{r get_data, message=FALSE,echo=FALSE}
+############################################################################
+#  Figure producing R function rutine
+############################################################################
+rm(list=ls(all=TRUE))
+library(gplots)
+library(PBSadmb)
+library(mgcv)
+library(knitr)
+library(rmarkdown)
+admodeldir <- paste('C:/Projects/Norton_Sound/NSCrab/Prediction_model/2017/Model/')
+setwd(admodeldir)
+
+############################################################################
+#   1.0 Read source file 
+############################################################################
+# Read read.R for program use
+source('C:/Projects/Norton_Sound/NSCrab/Prediction_model/Models/R/ADMB_rw_data.R')
+
+############################################################################
+#   1.1 Define input file name and output file name and locations. 
+############################################################################
+# infun: input file name 
+datadir <- paste('C:/Projects/Norton_Sound/NSCrab/Prediction_model/Models/')
+
+############################################################################
+#   ADMB data name
+############################################################################
+datafn <- paste(datadir,'ns3n2017new.dat',sep='')
+
+############################################################################
+#   1.2  ADMB program name 
+############################################################################
+# ADMB model file name
+prefix <- paste(admodeldir,'ns3n2017_Feb1_tr',sep='')
+
+# fnpar: ADMB parameter ouput file name 
+fn <- paste(prefix,'.rep',sep='')
+fnpar <- paste(prefix,'.std',sep='')
+
+############################################################################
+#  Run ADMB Model  
+############################################################################
+# Run the ADMB 
+argvec <- paste(' -ind ',datafn,sep="")
+runAD(prefix=prefix, argvec = argvec, logfile=TRUE, add = FALSE, verbose=TRUE)
+
+# Run ADMB with MCMC 
+argvec <- paste(' -ind ',outfn,sep="", ' -mcmc 1000000 -mcsave 1000')
+runAD(prefix=prefix, argvec = argvec, logfile=TRUE, add = FALSE, verbose=TRUE)
+argvec <- paste(' -ind ',outfn,sep="", ' -mceval')
+runAD(prefix=prefix, argvec = argvec, logfile=TRUE, add = FALSE, verbose=TRUE)
+
+############################################################################
+#  Read ADMB data and results 
+############################################################################
+dat <- datatoR(datafn) 
+
+# Read output file
+rept <- reptoRlist(fn)
+#rept
+par1 <- read.table(fnpar, sep='',header=T)
+pars <- data.frame(t(par1[,3]))
+names(pars) <- t(par1[,2])
+rept$f
+rept$tf
+rept$sth2
+rept$sth3
+par1
+
+############################################################################
+#  Calculate Sample numbers 
+############################################################################
+# Calculate total 
+  st <- colSums(dat$nont)+colSums(dat$noot)
+  sw <- colSums(dat$nonw)+colSums(dat$noow)
+  sc <- colSums(dat$nonc)+colSums(dat$nooc)
+  so <- colSums(dat$nono)+colSums(dat$nooo)
+
+  ont <- dat$nont/st[col(dat$nont)]
+  oot <- dat$noot/st[col(dat$noot)]
+  onw <- dat$nonw/sw[col(dat$nonw)]
+  oow <- dat$noow/sw[col(dat$noow)]
+  onc <- dat$nonc/sc[col(dat$nonc)]
+  ooc <- dat$nooc/sc[col(dat$nooc)]
+  ono <- dat$nono/so[col(dat$nono)]
+  ooo <- dat$nooo/so[col(dat$nooo)]
+
+############################################################################
+#  Calculate Sample numbers 
+############################################################################
+year <- seq(dat$fyear,dat$lyear)
+year.1 <- c(year,dat$lyear+1)
+# Define number of years 
+ny <- length(year)
+min.s <- with(dat,slm-(slt-1)/2)
+length.c  <- seq(min.s,min.s+(dat$na)*dat$slt,dat$slt)
+sizeclass <- length.c + (dat$slt-1)/2
+sizeclass[length(sizeclass)] <- sizeclass[length(sizeclass)-1]
+```
+# Overview of the Figure 1
+So let's have a look at this dataset
+
+```{r,echo=FALSE}
+############################################################################
+#  Figures 
+############################################################################
+windows(width=20,height=20,record=TRUE)
+ 
+############################################################################
+#  Plot Annual Molting probability 
+############################################################################
+if(dat$rmol_phase==1)
+{
+par(mfrow=c(6,7),mar = c(2, 1.5, 1.5, 1.5),oma=c(4,1,2,1))
+for(i in 1:ny){
+moltp <- moltp <- c(rept$molp[,i],rept$molp[dat$na,i])
+plot(length.c, moltp,type='s', ylim=c(0,1),,main = year[i])
+}
+mtext("Annual Molting probability", side=3, outer=T)
+}
+############################################################################
+#  Plot Selectivity
+############################################################################
+par(mfrow=c(2,3),mar = c(2, 1.5, 1.5, 1.5),oma=c(4,1,2,1))
+# Molting Probability 
+moltp <- c(rept$molp[,1],rept$molp[dat$na,1])
+if(dat$rmol_phase==-1) plot(length.c, moltp,type='s',ylim=c(0,1), main='Molting Probability')
+# Trawl Selectivity
+# NOAA or 1 trawl selectivity
+trawlpn <- c(rept$selt1[1,],rept$selt1[1,dat$na])
+plot(length.c, trawlpn,type='s',ylim=c(0,1))
+if(dat$nst==2) title(main='NOAA Trawl Selectivity') else title(main='Trawl Selectivity')
+# ADFG or 2 trawl selectivity
+trawlpa <- c(rept$selt1[2,],rept$selt1[2,dat$na])
+if(dat$nst==2) plot(length.c, trawlpa,type='s', main='ADFG Trawl Selectivity', ylim=c(0,1))
+# Winter Pot Selectivity
+wpotp <- c(rept$selw,rept$selw[dat$na])
+plot(length.c, wpotp,type='s', main='Winter pot Selectivity', ylim=c(0,1))
+# Summer Commercial Selectivity
+sc1p <- c(rept$selc1[1,],rept$selc1[1,dat$na])
+plot(length.c, sc1p,type='s',ylim=c(0,1))
+if(dat$nsc==2) title(main='Commercial Selectivity 76-92') else title(main='Commercial Selectivity')
+sc2p <- c(rept$selc1[2,],rept$selc1[2,dat$na])
+if(dat$nsc==2) plot(length.c, sc2p,type='s', main='Commercial Selectivity 93-15', ylim=c(0,1))
+#sc3p <- selc(pars$log_sc5)
+#plot(lengthclass, sc3p,type='s', main='Commercial 93-14 Selectivity', ylim=c(0,1))
+```
+

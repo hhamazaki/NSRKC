@@ -1,0 +1,301 @@
+#if !defined(_NS3N2013CPUE_SEL_)
+#  define _NS3N2013CPUE_SEL_
+
+class model_data : public ad_comm{
+  data_int ny;
+  data_int na;
+  data_int nyt;
+  data_int nyp;
+  data_int nyw;
+  data_int nyf;
+  data_int nyo;
+  data_int scy1;
+  data_int scy2;
+  data_int scp;
+  data_number slm;
+  data_number slt;
+  data_number M;
+  data_number ms;
+  data_number slt6;
+  data_number qt;
+  data_number spcv;
+  data_number lamt;
+  data_number lamp;
+  data_number lamc;
+  data_number maxss;
+  data_number efn;
+  data_vector lg;
+  data_matrix gr;
+  data_ivector it;
+  data_vector tt;
+  data_vector pct;
+  data_vector yt;
+  data_vector st;
+  data_vector cv1;
+  data_vector cv2;
+  data_vector cv3;
+  data_ivector ip;
+  data_vector tp;
+  data_vector yp;
+  data_vector sp;
+  data_ivector iw;
+  data_vector sw;
+  data_int ipre;
+  data_number spre;
+  data_vector sc;
+  data_vector tc;
+  data_vector te;
+  data_vector stcpue;
+  data_vector secpue;
+  data_vector ys;
+  data_ivector io;
+  data_vector so;
+  data_vector twc;
+  data_vector tsc;
+  data_matrix ont;
+  data_matrix oot;
+  data_matrix onp;
+  data_matrix oop;
+  data_matrix onw;
+  data_matrix oow;
+  data_vector onf;
+  data_vector oof;
+  data_matrix onc;
+  data_matrix ooc;
+  data_matrix ono;
+  data_matrix ooo;
+  data_vector wm;
+  data_number hm;
+  dvector tt1;
+  dvector tt2;
+  dvector tp1;
+  dvector tp2;
+  data_int ProjType;
+  data_int FirstYr;
+  int Nproj;
+  data_int NprojFmsy;
+  data_int NprojSim;
+  data_number alpha;
+  data_number beta;
+  data_int Bmsy_yr1;
+  data_int Bmsy_yr2;
+  data_number CVEstWithin;
+  data_number CVEstExtra;
+  data_number Buffer;
+  data_int BurnIn;
+  data_int LastSim;
+  data_int SR_FORM;
+  data_number Steep;
+  data_number SigmaR;
+  data_int Lag;
+  data_int PrintAll;
+  int mcmc_count;
+  int fn_count;
+  int MaxSim;
+  int YrPass;
+  imatrix RecInd;
+  int SR_rel;
+  int PrintDiag;
+  ~model_data();
+  model_data(int argc,char * argv[]);
+  friend class model_parameters;
+};
+
+class model_parameters : public model_data ,
+  public function_minimizer
+{
+public:
+  ~model_parameters();
+  void preliminary_calculations(void);
+  void set_runtime(void);
+  virtual void * mycast(void) {return (void*)this;}
+  static int mc_phase(void)
+  {
+    return initial_params::mc_phase;
+  }
+  static int mceval_phase(void)
+  {
+    return initial_params::mceval_phase;
+  }
+  static int sd_phase(void)
+  {
+    return initial_params::sd_phase;
+  }
+  static int current_phase(void)
+  {
+    return initial_params::current_phase;
+  }
+  static int last_phase(void)
+  {
+    return (initial_params::current_phase
+      >=initial_params::max_number_phases);
+  }
+  static prevariable current_feval(void)
+  {
+    return *objective_function_value::pobjfun;
+  }
+private:
+  ivector integer_control_flags;
+  dvector double_control_flags;
+  param_init_bounded_number log_q1;
+  param_init_bounded_number log_q2;
+  param_init_bounded_number log_q3;
+  param_init_bounded_number log_initpop;
+  param_init_bounded_number log_recscale;
+  param_init_bounded_dev_vector log_relrec;
+  param_init_bounded_number r1;
+  param_init_bounded_number log_mo1;
+  param_init_bounded_number log_mo2;
+  param_init_bounded_number log_st1;
+  param_init_bounded_number log_st2;
+  param_init_bounded_number log_st3;
+  param_init_bounded_number log_st4;
+  param_init_bounded_number log_sp1;
+  param_init_bounded_number log_sp2;
+  param_init_bounded_number log_sw1;
+  param_init_bounded_number log_sw2;
+  param_init_bounded_number sw3;
+  param_init_bounded_number log_sc1;
+  param_init_bounded_number log_sc2;
+  param_init_bounded_number log_sc3;
+  param_init_bounded_number log_sc4;
+  param_init_bounded_number log_sc5;
+  param_init_bounded_number log_sc6;
+  param_init_bounded_number sos0;
+  param_init_bounded_number sow;
+  param_init_bounded_number p4;
+  param_vector log_rec;
+  param_matrix nps;
+  param_matrix ops;
+  param_matrix npw;
+  param_matrix opw;
+  param_vector rec;
+  param_matrix ent;
+  param_matrix et0;
+  param_matrix enp;
+  param_matrix eop;
+  param_matrix enw;
+  param_matrix eow;
+  param_vector enf;
+  param_vector eof;
+  param_matrix enc;
+  param_matrix eoc;
+  param_matrix eno;
+  param_matrix eoo;
+  param_matrix en0;
+  param_matrix eo0;
+  param_matrix en1;
+  param_matrix eo1;
+  param_vector ett;
+  param_vector ett1;
+  param_vector ett2;
+  param_vector etp;
+  param_vector etp1;
+  param_vector etp2;
+  param_vector ete;
+  param_vector ecpue;
+  param_vector cvcpue;
+  param_vector tb;
+  param_vector mp1;
+  param_vector mp2;
+  param_vector mp3;
+  param_vector mp0;
+  param_vector sel92;
+  param_vector sel93;
+  param_vector sel08;
+  param_matrix sel;
+  param_vector selt;
+  param_vector selp;
+  param_vector selw;
+  param_vector Mn;
+  param_vector Mo;
+  param_vector sos;
+  param_number q1;
+  param_number q2;
+  param_number q3;
+  param_number pre;
+  param_vector bc;
+  param_vector FSum;
+  param_vector FWin;
+  param_vector FSub;
+  param_number FratSub;
+  param_number FratWin;
+  param_number Fmult;
+  param_number CatSum;
+  param_number CatSub;
+  param_number CatWin;
+  param_number FutCatSum;
+  param_number FutCatSub;
+  param_number FutCatWin;
+  param_matrix npsEst;
+  param_matrix opsEst;
+  param_matrix npwEst;
+  param_matrix opwEst;
+  param_vector mmbEst;
+  param_vector recEst;
+  param_matrix npsSto;
+  param_matrix opsSto;
+  param_matrix npwSto;
+  param_matrix opwSto;
+  param_vector mmbSto;
+  param_vector recSto;
+  param_matrix EstInd;
+  param_matrix EstRec;
+  param_number MMB0;
+  param_number R0;
+  param_number PassCatch;
+  param_number RecPass;
+  param_number BmsyProx;
+  param_number fbest;
+  param_number tf1;
+  param_number tf2;
+  param_number tf3;
+  param_number tf4;
+  param_number tf5;
+  param_number tf6;
+  param_number tf7;
+  param_number tf8;
+  param_number tf9;
+  param_number tf10;
+  param_number tf11;
+  param_number tf12;
+  param_number tf13;
+  param_number tf14;
+  param_number tf15;
+  param_number prior_function_value;
+  param_number likelihood_function_value;
+  objective_function_value f;
+  param_stddev_vector last_y;
+  param_stddev_vector legaln;
+  param_stddev_vector legalb;
+  param_stddev_vector mmb0;
+  param_vector legal;
+  param_vector mmb;
+  param_likeprof_number last_legal;
+  param_likeprof_number last_subl;
+  param_likeprof_number last_mmb;
+  param_likeprof_number last_ofl;
+  param_number nc;
+  param_number oc;
+public:
+  virtual void userfunction(void);
+  virtual void report(void);
+  virtual void final_calcs(void);
+  model_parameters(int sz,int argc, char * argv[]);
+  virtual void initializationfunction(void);
+  void convert_parameters_into_rates(void);
+  void get_first_year_abundance(void);
+  void get_number_by_size(void);
+  void get_proportion_and_effort(void);
+  void evaluate_the_objective_function(void);
+  void Get_Steepness(void);
+  void Find_OFL(void);
+  void Proj1Yr(void);
+  void Find_OFL_EST(void);
+  void Proj1YrEst(void);
+  void ProjAll(void);
+  void ProjConstF(void);
+  void get_reference_points(void);
+
+};
+#endif
